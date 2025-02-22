@@ -48,6 +48,7 @@ const Page = () => {
                     autoFocus
                 />
 
+                {/* @ts-expect-error from the scaffolding */}
                 <InputError messages={errors.name} className="mt-2" />
             </div>
 
@@ -64,6 +65,7 @@ const Page = () => {
                     required
                 />
 
+                {/* @ts-expect-error from the scaffolding */}
                 <InputError messages={errors.email} className="mt-2" />
             </div>
 
@@ -81,14 +83,13 @@ const Page = () => {
                     autoComplete="new-password"
                 />
 
+                {/* @ts-expect-error from the scaffolding */}
                 <InputError messages={errors.password} className="mt-2" />
             </div>
 
             {/* Confirm Password */}
             <div className="mt-4">
-                <Label htmlFor="passwordConfirmation">
-                    Confirm Password
-                </Label>
+                <Label htmlFor="passwordConfirmation">Confirm Password</Label>
 
                 <Input
                     id="passwordConfirmation"
@@ -102,6 +103,7 @@ const Page = () => {
                 />
 
                 <InputError
+                    // @ts-expect-error from the scaffolding
                     messages={errors.password_confirmation}
                     className="mt-2"
                 />

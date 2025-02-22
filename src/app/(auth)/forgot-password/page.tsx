@@ -28,8 +28,8 @@ const Page = () => {
         <>
             <div className="mb-4 text-sm text-gray-600">
                 Forgot your password? No problem. Just let us know your email
-                address and we will email you a password reset link that
-                will allow you to choose a new one.
+                address and we will email you a password reset link that will
+                allow you to choose a new one.
             </div>
 
             {/* Session Status */}
@@ -50,6 +50,7 @@ const Page = () => {
                         autoFocus
                     />
 
+                    {/* @ts-expect-error from the scaffolding */}
                     <InputError messages={errors.email} className="mt-2" />
                 </div>
 

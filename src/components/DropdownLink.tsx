@@ -4,6 +4,7 @@ import { Menu } from '@headlessui/react'
 const DropdownLink = ({ children, ...props }) => (
     <Menu.Item>
         {({ active }) => (
+            /* @ts-expect-error came from the scaffolding */
             <Link
                 {...props}
                 className={`w-full text-left block px-4 py-2 text-sm leading-5 text-gray-700 ${
