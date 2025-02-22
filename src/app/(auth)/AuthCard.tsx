@@ -1,9 +1,4 @@
-import { FC, ReactNode } from 'react'
-
-const AuthCard: FC<{ logo: ReactNode; children: ReactNode }> = ({
-    logo,
-    children,
-}) => (
+const AuthCard = ({ logo, children }) => (
     <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
         <div>{logo}</div>
 

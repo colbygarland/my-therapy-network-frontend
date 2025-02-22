@@ -1,8 +1,7 @@
 import LoginLinks from '@/app/LoginLinks'
 import { Container } from '@/components/Container'
-import { Metadata } from 'next'
 
-export const metadata: Metadata = {
+export const metadata = {
     title: 'My Therapy Network',
 }
 
