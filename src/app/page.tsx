@@ -1,4 +1,3 @@
-import LoginLinks from '@/app/LoginLinks'
 import { AvailabilityTable } from '@/components/AvailabilityTable'
 import { Container } from '@/components/Container'
 import { DateTimePicker } from '@/components/ui/DateTimePicker'
@@ -22,115 +21,103 @@ const THERAPY = ['Massage Therapist', 'Acupuncture', 'Occupational Therapist']
 
 const Home = async () => {
     return (
-        <>
-            <header className="bg-gray-100 px-6 py-4">
+        <main>
+            <section className="py-8">
                 <Container>
-                    <div className="flex items-center justify-between">
-                        <h1 className="text-xl font-bold">
-                            My Therapy Network
-                        </h1>
-                        <LoginLinks />
+                    <div className="px-8">
+                        <h2>Quick Booking</h2>
+                        <div className="mt-8 flex gap-8">
+                            <div>
+                                <Label className="mb-2">
+                                    What are you looking for?
+                                </Label>
+                                <Select>
+                                    <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="Therapy Type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {THERAPY.map(value => (
+                                            <SelectItem
+                                                value={value.toLocaleLowerCase()}
+                                                key={value}>
+                                                {value}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div>
+                                <Label className="mb-2">Country</Label>
+                                <Select>
+                                    <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="Country" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {COUNTRIES.map(value => (
+                                            <SelectItem
+                                                value={value.toLocaleLowerCase()}
+                                                key={value}>
+                                                {value}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div>
+                                <Label className="mb-2">Province</Label>
+                                <Select>
+                                    <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="State" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {STATES.map(value => (
+                                            <SelectItem
+                                                value={value.toLocaleLowerCase()}
+                                                key={value}>
+                                                {value}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div>
+                                <Label className="mb-2">City</Label>
+                                <Select>
+                                    <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="City" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {CITIES.map(value => (
+                                            <SelectItem
+                                                value={value.toLocaleLowerCase()}
+                                                key={value}>
+                                                {value}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div>
+                                <Label className="mb-2">
+                                    Choose date and time
+                                </Label>
+                                <div className="min-w-[200px]">
+                                    <DateTimePicker />
+                                </div>
+                            </div>
+                            <div />
+                        </div>
                     </div>
                 </Container>
-            </header>
-            <main>
-                <section className="py-8">
-                    <Container>
-                        <div className="px-8">
-                            <h2>Quick Booking</h2>
-                            <div className="mt-8 flex gap-8">
-                                <div>
-                                    <Label className="mb-2">
-                                        What are you looking for?
-                                    </Label>
-                                    <Select>
-                                        <SelectTrigger className="w-[180px]">
-                                            <SelectValue placeholder="Therapy Type" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {THERAPY.map(value => (
-                                                <SelectItem
-                                                    value={value.toLocaleLowerCase()}
-                                                    key={value}>
-                                                    {value}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div>
-                                    <Label className="mb-2">Country</Label>
-                                    <Select>
-                                        <SelectTrigger className="w-[180px]">
-                                            <SelectValue placeholder="Country" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {COUNTRIES.map(value => (
-                                                <SelectItem
-                                                    value={value.toLocaleLowerCase()}
-                                                    key={value}>
-                                                    {value}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div>
-                                    <Label className="mb-2">Province</Label>
-                                    <Select>
-                                        <SelectTrigger className="w-[180px]">
-                                            <SelectValue placeholder="State" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {STATES.map(value => (
-                                                <SelectItem
-                                                    value={value.toLocaleLowerCase()}
-                                                    key={value}>
-                                                    {value}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div>
-                                    <Label className="mb-2">City</Label>
-                                    <Select>
-                                        <SelectTrigger className="w-[180px]">
-                                            <SelectValue placeholder="City" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {CITIES.map(value => (
-                                                <SelectItem
-                                                    value={value.toLocaleLowerCase()}
-                                                    key={value}>
-                                                    {value}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div>
-                                    <Label className="mb-2">
-                                        Choose date and time
-                                    </Label>
-                                    <div className="min-w-[200px]">
-                                        <DateTimePicker />
-                                    </div>
-                                </div>
-                                <div />
-                            </div>
-                        </div>
-                    </Container>
-                </section>
-                <section className="py-8">
-                    <Container>
-                        <div className="px-8">
-                            <AvailabilityTable />
-                        </div>
-                    </Container>
-                </section>
-            </main>
-        </>
+            </section>
+            <section className="py-8">
+                <Container>
+                    <div className="px-8">
+                        <AvailabilityTable />
+                    </div>
+                </Container>
+            </section>
+        </main>
     )
 }
 

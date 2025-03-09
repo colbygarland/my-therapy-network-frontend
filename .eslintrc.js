@@ -25,7 +25,7 @@ module.exports = {
         ecmaVersion: 2020,
         requireConfigFile: false,
         babelOptions: {
-            presets: ['@babel/preset-react'],
+            presets: ['@babel/preset-react', '@babel/preset-typescript'],
         },
     },
     rules: {
