@@ -2,6 +2,26 @@ import useSWR from 'swr'
 import { Availability } from './types/Availability'
 import { PractitionType } from './types/PractitionTypes'
 
+export const API = {
+  availability: {
+    get: (id: string) => fetcher<Availability>(`availability/${id}`, 'GET'),
+    list: ({
+      date,
+      practition_type_id,
+    }: {
+      date?: string
+      practition_type_id?: string
+    }) =>
+      fetcher<Array<Availability>>('availability', 'GET', {
+        ...(date && { date }),
+        ...(practition_type_id && { practition_type_id }),
+      }),
+  },
+  practitionTypes: {
+    list: () => fetcher<Array<PractitionType>>('practition-types', 'GET'),
+  },
+} as const
+
 type Fetcher<T> = Promise<{
   data?: T
   error: null | Record<string, unknown>
@@ -10,19 +30,30 @@ type Fetcher<T> = Promise<{
 const fetcher = async <T>(
   url: string,
   method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE',
-  body?: Record<string, unknown>,
+  body?: {},
 ): Fetcher<T> => {
   let data: T = {} as T
   let error = null
 
   try {
-    const d = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/${url}`, {
-      method,
-      headers: {
-        'Content-Type': 'application/json',
+    console.debug('Making API call..')
+    let queryParams = ''
+    if (method === 'GET' && body) {
+      console.log(body)
+      queryParams = '?' + new URLSearchParams(body).toString()
+    }
+    console.log('queryParams', queryParams)
+    const d = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/${url}${queryParams}`,
+      {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: method !== 'GET' && body ? JSON.stringify(body) : null,
       },
-      body: JSON.stringify(body),
-    }).then(res => res.json())
+    ).then(res => res.json())
+    console.debug('API call complete:', d)
 
     data = d
   } catch (err) {
@@ -31,16 +62,6 @@ const fetcher = async <T>(
 
   return { data, error }
 }
-
-export const API = {
-  availability: {
-    get: (id: string) => fetcher<Availability>(`availability/${id}`, 'GET'),
-    list: () => fetcher<Array<Availability>>('availability', 'GET'),
-  },
-  practitionTypes: {
-    list: () => fetcher<Array<PractitionType>>('practition-types', 'GET'),
-  },
-} as const
 
 type APIType = keyof typeof API
 type APIMethod<T extends APIType> = keyof (typeof API)[T]
@@ -57,20 +78,21 @@ export function useAPI<T extends APIType, M extends APIMethod<T>>(
   type: T,
   method: M,
   // @ts-expect-error
-  ...args: Parameters<(typeof API)[T][M]>
+  body?: Parameters<(typeof API)[T][M]>,
 ): Awaited<ReturnType<APIFunction<T, M>>> & {
   isLoading: boolean
 } {
   const fetcherFn = API[type][method] as (
     // @ts-expect-error
-    ...args: Parameters<(typeof API)[T][M]>
+    body: Parameters<(typeof API)[T][M]>,
   ) => Promise<any>
 
   const { data, error, isLoading } = useSWR<APIResponse<T>>(
-    [type, method, ...args], // Unique cache key
+    [type, method, body], // Unique cache key
     async () => {
       try {
-        const result = await fetcherFn(...args) // Ensure the promise resolves
+        // @ts-expect-error
+        const result = await fetcherFn(body) // Ensure the promise resolves
         return result.data // Return the resolved data (not the promise)
       } catch (err) {
         console.error('Error in API fetch:', err)

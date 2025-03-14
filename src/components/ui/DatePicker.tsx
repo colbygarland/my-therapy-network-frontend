@@ -12,9 +12,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { toUTC } from '@/lib/date'
 
-export function DatePicker() {
-  const [date, setDate] = React.useState<Date>()
+export function DatePicker({ name }: { name: string }) {
+  const [date, setDate] = React.useState<Date>(new Date())
 
   return (
     <Popover>
@@ -27,6 +28,7 @@ export function DatePicker() {
           )}>
           <CalendarIcon />
           {date ? format(date, 'PPP') : <span>Pick a date</span>}
+          <input type="hidden" value={toUTC(date!)} name={name} />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">

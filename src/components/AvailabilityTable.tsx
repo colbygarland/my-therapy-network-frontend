@@ -33,7 +33,8 @@ import {
 } from './ui/select'
 import { DatePicker } from './ui/DatePicker'
 import { Label } from './ui/label'
-import { useAPI } from '@/lib/api/api'
+import { API, useAPI } from '@/lib/api/api'
+import { useState } from 'react'
 
 const Modal = ({ availability }: { availability: Availability }) => {
   return (
@@ -62,18 +63,19 @@ const Modal = ({ availability }: { availability: Availability }) => {
 }
 
 export const AvailabilityTable = () => {
-  const {
-    data: availability,
-    error,
-    isLoading,
-  } = useAPI('availability', 'list')
   const { data: practitionTypes } = useAPI('practitionTypes', 'list')
+  const [availability, setAvailability] = useState<Availability[]>([])
 
-  if (error) {
-    return 'error'
-  }
-  if (isLoading) {
-    return 'loading'
+  const handleSubmit = async e => {
+    e.preventDefault()
+    const formData = new FormData(e.target)
+    const { data } = await API.availability.list({
+      date: formData.get('date')?.toString(),
+      practition_type_id: formData.get('practition_type_id')?.toString(),
+    })
+    if (data) {
+      setAvailability(data)
+    }
   }
 
   return (
@@ -82,18 +84,18 @@ export const AvailabilityTable = () => {
         <Container>
           <div className="px-8">
             <h2>Quick Booking</h2>
-            <div className="mt-8 flex gap-8">
-              <form>
+            <form onSubmit={handleSubmit}>
+              <div className="mt-8 flex gap-8">
                 <div>
                   <Label className="mb-2">What are you looking for?</Label>
-                  <Select>
+                  <Select name="practition_type_id" required>
                     <SelectTrigger className="w-[280px]">
                       <SelectValue placeholder="Therapy Type" />
                     </SelectTrigger>
                     <SelectContent>
-                      {practitionTypes?.map(({ type, id }) => (
-                        <SelectItem value={type.toLocaleLowerCase()} key={id}>
-                          {type}
+                      {practitionTypes?.map(type => (
+                        <SelectItem value={type.id.toString()} key={type.id}>
+                          {type.type}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -102,42 +104,48 @@ export const AvailabilityTable = () => {
                 <div>
                   <Label className="mb-2">Choose date and time</Label>
                   <div className="min-w-[280px]">
-                    <DatePicker />
+                    <DatePicker name="date" />
                   </div>
                 </div>
                 <div>
                   <Button type="submit">Submit</Button>
                 </div>
-              </form>
-            </div>
+              </div>
+            </form>
           </div>
         </Container>
       </section>
-      <Table>
-        <TableCaption>Available Time Slots</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Starts</TableHead>
-            <TableHead>Ends</TableHead>
-            <TableHead>Rating</TableHead>
-            <TableHead />
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {availability?.map(d => {
-            return (
-              <TableRow key={d.id}>
-                <TableCell>{formatDate(d.start_at)}</TableCell>
-                <TableCell>{formatDate(d.end_at)}</TableCell>
-                <TableCell>4.5</TableCell>
-                <TableCell>
-                  <Modal availability={d} />
-                </TableCell>
-              </TableRow>
-            )
-          })}
-        </TableBody>
-      </Table>
+      <section>
+        <Container>
+          <div className="px-8">
+            <Table>
+              <TableCaption>Available Time Slots</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Starts</TableHead>
+                  <TableHead>Ends</TableHead>
+                  <TableHead>Rating</TableHead>
+                  <TableHead />
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {availability?.map(d => {
+                  return (
+                    <TableRow key={d.id}>
+                      <TableCell>{formatDate(d.start_at)}</TableCell>
+                      <TableCell>{formatDate(d.end_at)}</TableCell>
+                      <TableCell>4.5</TableCell>
+                      <TableCell>
+                        <Modal availability={d} />
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </div>
+        </Container>
+      </section>
     </>
   )
 }
