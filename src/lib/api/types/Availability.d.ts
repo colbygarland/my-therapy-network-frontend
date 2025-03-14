@@ -1,3 +1,5 @@
+import type { PractitionType } from './PractitionTypes'
+
 type Practitioner = {
   id: number
   name: string
@@ -8,13 +10,6 @@ type Practitioner = {
   created_at: string
   updated_at: string
   practition_types: string[]
-}
-
-type PractitionType = {
-  id: number
-  type: string
-  created_at: string
-  updated_at: string
 }
 
 export type Availability = {

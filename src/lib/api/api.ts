@@ -1,14 +1,11 @@
+import useSWR from 'swr'
 import { Availability } from './types/Availability'
+import { PractitionType } from './types/PractitionTypes'
 
 type Fetcher<T> = Promise<{
-  data: T
+  data?: T
   error: null | Record<string, unknown>
 }>
-
-type List<T> = {
-  count: number
-  data: Array<T>
-}
 
 const fetcher = async <T>(
   url: string,
@@ -38,6 +35,50 @@ const fetcher = async <T>(
 export const API = {
   availability: {
     get: (id: string) => fetcher<Availability>(`availability/${id}`, 'GET'),
-    list: () => fetcher<List<Availability>>('availability', 'GET'),
+    list: () => fetcher<Array<Availability>>('availability', 'GET'),
+  },
+  practitionTypes: {
+    list: () => fetcher<Array<PractitionType>>('practition-types', 'GET'),
   },
 } as const
+
+type APIType = keyof typeof API
+type APIMethod<T extends APIType> = keyof (typeof API)[T]
+type APIResponse<T> = Awaited<ReturnType<typeof fetcher<T>>>
+
+type APIFunction<
+  T extends APIType,
+  M extends APIMethod<T>,
+> = (typeof API)[T][M] extends (...args: any[]) => Promise<any>
+  ? (...args: Parameters<(typeof API)[T][M]>) => ReturnType<(typeof API)[T][M]>
+  : never
+
+export function useAPI<T extends APIType, M extends APIMethod<T>>(
+  type: T,
+  method: M,
+  // @ts-expect-error
+  ...args: Parameters<(typeof API)[T][M]>
+): Awaited<ReturnType<APIFunction<T, M>>> & {
+  isLoading: boolean
+} {
+  const fetcherFn = API[type][method] as (
+    // @ts-expect-error
+    ...args: Parameters<(typeof API)[T][M]>
+  ) => Promise<any>
+
+  const { data, error, isLoading } = useSWR<APIResponse<T>>(
+    [type, method, ...args], // Unique cache key
+    async () => {
+      try {
+        const result = await fetcherFn(...args) // Ensure the promise resolves
+        return result.data // Return the resolved data (not the promise)
+      } catch (err) {
+        console.error('Error in API fetch:', err)
+        throw err // Allow SWR to handle the error
+      }
+    },
+  )
+
+  // @ts-expect-error
+  return { data, error, isLoading }
+}
