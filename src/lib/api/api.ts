@@ -1,8 +1,12 @@
 import useSWR from 'swr'
 import { Availability } from './types/Availability'
 import { PractitionType } from './types/PractitionTypes'
+import { Patient } from './types/Patient'
 
 export const API = {
+  meta: {
+    up: () => fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/up`),
+  },
   availability: {
     get: (id: string) => fetcher<Availability>(`availability/${id}`, 'GET'),
     list: ({
@@ -20,11 +24,20 @@ export const API = {
   practitionTypes: {
     list: () => fetcher<Array<PractitionType>>('practition-types', 'GET'),
   },
+  patient: {
+    create: ({ name, email, phone }) =>
+      fetcher<Patient>('patients', 'POST', { name, email, phone }),
+    get: (id: string) => fetcher<Patient>(`patients/get/${id}`, 'GET'),
+    find: ({ email, phone }) =>
+      fetcher<Patient>(`patients/find`, 'GET', { email, phone }),
+    list: () => fetcher<Array<Patient>>('patients', 'GET'),
+  },
 } as const
 
 type Fetcher<T> = Promise<{
   data?: T
   error: null | Record<string, unknown>
+  status: number
 }>
 
 const fetcher = async <T>(
@@ -34,15 +47,14 @@ const fetcher = async <T>(
 ): Fetcher<T> => {
   let data: T = {} as T
   let error = null
+  let status = 0
 
   try {
-    console.debug('Making API call..')
+    console.debug('Making API call to: ' + url)
     let queryParams = ''
     if (method === 'GET' && body) {
-      console.log(body)
       queryParams = '?' + new URLSearchParams(body).toString()
     }
-    console.log('queryParams', queryParams)
     const d = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/${url}${queryParams}`,
       {
@@ -52,15 +64,18 @@ const fetcher = async <T>(
         },
         body: method !== 'GET' && body ? JSON.stringify(body) : null,
       },
-    ).then(res => res.json())
+    )
+    const json = await d.json()
+    const s = d.status
     console.debug('API call complete:', d)
 
-    data = d
+    data = json
+    status = s
   } catch (err) {
     error = err
   }
 
-  return { data, error }
+  return { data, error, status }
 }
 
 type APIType = keyof typeof API

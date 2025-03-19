@@ -1,3 +1,3 @@
 export const Container = ({ children }) => {
-    return <div className="max-w-7xl mx-auto">{children}</div>
+  return <div className="mx-auto max-w-7xl px-8">{children}</div>
 }

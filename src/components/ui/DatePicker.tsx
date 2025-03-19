@@ -35,6 +35,7 @@ export function DatePicker({ name }: { name: string }) {
         <Calendar
           mode="single"
           selected={date}
+          // @ts-expect-error
           onSelect={setDate}
           initialFocus
         />

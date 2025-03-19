@@ -35,6 +35,7 @@ import { DatePicker } from './ui/DatePicker'
 import { Label } from './ui/label'
 import { API, useAPI } from '@/lib/api/api'
 import { useState } from 'react'
+import Link from 'next/link'
 
 const Modal = ({ availability }: { availability: Availability }) => {
   return (
@@ -46,13 +47,15 @@ const Modal = ({ availability }: { availability: Availability }) => {
         <DialogHeader>
           <DialogTitle>Are you absolutely sure?</DialogTitle>
           <DialogDescription>
-            You are currently booking a {availability.practition_type.type}
+            You are currently booking a {availability.practition_type.type}{' '}
             appointment for {formatDate(availability.start_at)} to{' '}
             {formatDate(availability.end_at)}.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button type="submit">Confirm</Button>
+          <Link href={`/book/${availability.id}`}>
+            <Button>Continue to Payment</Button>
+          </Link>
           <DialogClose asChild>
             <Button variant="destructive">Cancel</Button>
           </DialogClose>
@@ -82,68 +85,64 @@ export const AvailabilityTable = () => {
     <>
       <section className="py-8">
         <Container>
-          <div className="px-8">
-            <h2>Quick Booking</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="mt-8 flex gap-8">
-                <div>
-                  <Label className="mb-2">What are you looking for?</Label>
-                  <Select name="practition_type_id" required>
-                    <SelectTrigger className="w-[280px]">
-                      <SelectValue placeholder="Therapy Type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {practitionTypes?.map(type => (
-                        <SelectItem value={type.id.toString()} key={type.id}>
-                          {type.type}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label className="mb-2">Choose date and time</Label>
-                  <div className="min-w-[280px]">
-                    <DatePicker name="date" />
-                  </div>
-                </div>
-                <div>
-                  <Button type="submit">Submit</Button>
+          <h2>Quick Booking</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="mt-8 flex gap-8">
+              <div>
+                <Label className="mb-2">What are you looking for?</Label>
+                <Select name="practition_type_id" required>
+                  <SelectTrigger className="w-[280px]">
+                    <SelectValue placeholder="Therapy Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {practitionTypes?.map(type => (
+                      <SelectItem value={type.id.toString()} key={type.id}>
+                        {type.type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="mb-2">Choose date and time</Label>
+                <div className="min-w-[280px]">
+                  <DatePicker name="date" />
                 </div>
               </div>
-            </form>
-          </div>
+              <div>
+                <Button type="submit">Submit</Button>
+              </div>
+            </div>
+          </form>
         </Container>
       </section>
       <section>
         <Container>
-          <div className="px-8">
-            <Table>
-              <TableCaption>Available Time Slots</TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Starts</TableHead>
-                  <TableHead>Ends</TableHead>
-                  <TableHead>Rating</TableHead>
-                  <TableHead />
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {availability?.map(d => {
-                  return (
-                    <TableRow key={d.id}>
-                      <TableCell>{formatDate(d.start_at)}</TableCell>
-                      <TableCell>{formatDate(d.end_at)}</TableCell>
-                      <TableCell>4.5</TableCell>
-                      <TableCell>
-                        <Modal availability={d} />
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
-              </TableBody>
-            </Table>
-          </div>
+          <Table>
+            <TableCaption>Available Time Slots</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Starts</TableHead>
+                <TableHead>Ends</TableHead>
+                <TableHead>Rating</TableHead>
+                <TableHead />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {availability?.map(d => {
+                return (
+                  <TableRow key={d.id}>
+                    <TableCell>{formatDate(d.start_at)}</TableCell>
+                    <TableCell>{formatDate(d.end_at)}</TableCell>
+                    <TableCell>4.5</TableCell>
+                    <TableCell>
+                      <Modal availability={d} />
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
         </Container>
       </section>
     </>
