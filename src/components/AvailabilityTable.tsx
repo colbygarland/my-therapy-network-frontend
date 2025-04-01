@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from './ui/table'
-import { formatDate } from '@/lib/date'
+import { formatDate, today } from '@/lib/date'
 import {
   Dialog,
   DialogClose,
@@ -34,7 +34,7 @@ import {
 import { DatePicker } from './ui/DatePicker'
 import { Label } from './ui/label'
 import { API, useAPI } from '@/lib/api/api'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 
 const Modal = ({ availability }: { availability: Availability }) => {
@@ -68,6 +68,17 @@ const Modal = ({ availability }: { availability: Availability }) => {
 export const AvailabilityTable = () => {
   const { data: practitionTypes } = useAPI('practitionTypes', 'list')
   const [availability, setAvailability] = useState<Availability[]>([])
+  const [error, setError] = useState({})
+
+  useEffect(() => {
+    API.availability.list({ date: today().toDateString() }).then(response => {
+      if (response.error) {
+        setError(response.error)
+      } else {
+        setAvailability(response.data!)
+      }
+    })
+  }, [])
 
   const handleSubmit = async e => {
     e.preventDefault()

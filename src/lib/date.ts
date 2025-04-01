@@ -14,3 +14,7 @@ export const formatDate = (dateInUTC: string) => {
 export const toUTC = (date: Date) => {
   return date.toISOString().replace('Z', '000Z')
 }
+
+export const today = () => {
+  return new Date()
+}
