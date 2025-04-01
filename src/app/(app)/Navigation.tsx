@@ -1,11 +1,11 @@
 import ApplicationLogo from '@/components/ApplicationLogo'
-import Dropdown from '@/components/Dropdown'
+import Dropdown from '@/components/__DO_NOT_USE/Dropdown'
 import Link from 'next/link'
-import NavLink from '@/components/NavLink'
+import NavLink from '@/components/__DO_NOT_USE/NavLink'
 import ResponsiveNavLink, {
   ResponsiveNavButton,
-} from '@/components/ResponsiveNavLink'
-import { DropdownButton } from '@/components/DropdownLink'
+} from '@/components/__DO_NOT_USE/ResponsiveNavLink'
+import { DropdownButton } from '@/components/__DO_NOT_USE/DropdownLink'
 import { useAuth } from '@/hooks/auth'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
