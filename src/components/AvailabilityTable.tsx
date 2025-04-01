@@ -68,12 +68,11 @@ const Modal = ({ availability }: { availability: Availability }) => {
 export const AvailabilityTable = () => {
   const { data: practitionTypes } = useAPI('practitionTypes', 'list')
   const [availability, setAvailability] = useState<Availability[]>([])
-  const [error, setError] = useState({})
 
   useEffect(() => {
     API.availability.list({ date: today().toDateString() }).then(response => {
       if (response.error) {
-        setError(response.error)
+        //
       } else {
         setAvailability(response.data!)
       }
